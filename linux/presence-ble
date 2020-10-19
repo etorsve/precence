@@ -1,5 +1,8 @@
 #!/bin/bash
 
+MQTT_SERVER=test.mosquitto.org
+MQTT_TOPIC=test-12345678
+
 IS_HERE=~/.is_here
 
 #################################
@@ -23,8 +26,8 @@ fi
 echo $new_here > $IS_HERE
 
 if [ $new_here -ne $HERE ]; then
-    echo "REPORT HERE=$new_here"
-    #mosquitto_pub -h test.mosquitto.org -m "$NOW;$new_here;BLE" -t test-12345678
+    #echo "REPORT HERE=$new_here"
+    mosquitto_pub -h $MQTT_SERVER -m "$NOW;$new_here;BLE" -t $MQTT_TOPIC
 #else
     #echo "no change"
 fi
