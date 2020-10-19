@@ -1,0 +1,30 @@
+#!/bin/bash
+
+IS_HERE=~/.is_here
+
+#################################
+
+NOW=`date +%Y-%m-%d_%H:%M:%S`
+#echo $NOW
+
+HERE=`cat $IS_HERE`
+#echo "here=$HERE"
+
+RV=`hcitool scan | grep POCOPHONE`
+RC=$?
+#RC=0 träff!
+#RC=1 ingen träff
+#echo "rv=$RC rc='$RV'"
+if [ $RC -eq 0 ]; then
+    new_here=1
+else
+    new_here=0
+fi
+echo $new_here > $IS_HERE
+
+if [ $new_here -ne $HERE ]; then
+    echo "REPORT HERE=$new_here"
+    #mosquitto_pub -h test.mosquitto.org -m "$NOW;$new_here;BLE" -t test-12345678
+#else
+    #echo "no change"
+fi
