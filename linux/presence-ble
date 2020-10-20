@@ -3,15 +3,21 @@
 MQTT_SERVER=test.mosquitto.org
 MQTT_TOPIC=test-12345678
 
-IS_HERE=~/.is_here
+#IS_HERE=~/.is_here
+IS_HERE=no
 
 #################################
 
-NOW=`date +%Y-%m-%d_%H:%M:%S`
+DATE=`date --iso`
+TIME=`date +%H:%M`
 #echo $NOW
 
-HERE=`cat $IS_HERE`
+if [ "$IS_HERE" != "no" ]; then
+    HERE=`cat $IS_HERE`
+#RC=$?
+#echo "rc=$RC"
 #echo "here=$HERE"
+fi
 
 RV=`hcitool scan | grep POCOPHONE`
 RC=$?
@@ -23,11 +29,25 @@ if [ $RC -eq 0 ]; then
 else
     new_here=0
 fi
-echo $new_here > $IS_HERE
 
-if [ $new_here -ne $HERE ]; then
-    #echo "REPORT HERE=$new_here"
-    mosquitto_pub -h $MQTT_SERVER -m "$NOW;$new_here;BLE" -t $MQTT_TOPIC
-#else
-    #echo "no change"
+if [ "$IS_HERE" == "no" ]; then
+    if [ $new_here -eq 1 ]; then
+        #msg="$DATE;$TIME;BLE"
+        msg="{ \"date\": \"$DATE\", \"time\": \"$TIME\", \"tag\": \"BLE\" }"
+        cmd="mosquitto_pub -h $MQTT_SERVER -m '$msg' -t $MQTT_TOPIC"
+        #echo "$cmd"
+        eval "$cmd"
+        #mosquitto_pub -h $MQTT_SERVER -m "$DATE;$TIME;BLE" -t $MQTT_TOPIC
+    fi
+else
+    echo $new_here > $IS_HERE
+    if [ $new_here -ne $HERE ]; then
+        msg="$DATE;$TIME;$new_here;BLE"
+        #echo "REPORT HERE=$new_here"
+        cmd="mosquitto_pub -h $MQTT_SERVER -m '$msg' -t $MQTT_TOPIC"
+        #echo "$cmd"
+        eval "$cmd"
+    #else
+        #echo "no change"
+    fi
 fi
