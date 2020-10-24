@@ -1,0 +1,2 @@
+ select datum,MIN(tid),MAX(tid) from presence group by datum;
+
