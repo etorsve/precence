@@ -1,7 +1,11 @@
 #!/bin/bash
 
-MQTT_SERVER=test.mosquitto.org
-MQTT_TOPIC=test-12345678
+#MQTT_SERVER=test.mosquitto.org
+MQTT_SERVER=home.torbjornsvensson.se
+#MQTT_TOPIC=test-12345678
+MQTT_TOPIC=presence
+MQTT_USER=torbjorn
+MQTT_PSWD=tosv4414
 
 #IS_HERE=~/.is_here
 IS_HERE=no
@@ -32,12 +36,10 @@ fi
 
 if [ "$IS_HERE" == "no" ]; then
     if [ $new_here -eq 1 ]; then
-        #msg="$DATE;$TIME;BLE"
         msg="{ \"date\": \"$DATE\", \"time\": \"$TIME\", \"tag\": \"BLE\" }"
         cmd="mosquitto_pub -h $MQTT_SERVER -m '$msg' -t $MQTT_TOPIC"
         #echo "$cmd"
         eval "$cmd"
-        #mosquitto_pub -h $MQTT_SERVER -m "$DATE;$TIME;BLE" -t $MQTT_TOPIC
     fi
 else
     echo $new_here > $IS_HERE
