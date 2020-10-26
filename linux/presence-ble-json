@@ -1,0 +1,25 @@
+#!/bin/bash
+
+JSON_FILE=/home/torbjorn/ws/precence/data.json
+
+#################################
+
+DATE=`date --iso`
+TIME=`date +%H:%M`
+#echo $NOW
+
+RV=`hcitool scan | grep POCOPHONE`
+RC=$?
+#RC=0 träff!
+#RC=1 ingen träff
+#echo "rv=$RC rc='$RV'"
+if [ $RC -eq 0 ]; then
+    new_here=1
+else
+    new_here=0
+fi
+
+if [ $new_here -eq 1 ]; then
+    msg="{ \"date\": \"$DATE\", \"time\": \"$TIME\", \"tag\": \"BLE\" },"
+    echo $msg >> $JSON_FILE
+fi
